@@ -1,8 +1,5 @@
 <?php
 /**
- * Budget Action Handler
- * 
- * Menangani operasi CRUD untuk anggaran/budget
  * - create: Tambah budget baru
  * - read: Ambil data budget
  * - update: Update data budget

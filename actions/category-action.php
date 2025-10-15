@@ -1,9 +1,5 @@
 <?php
 /**
- * Category Action Handler
- * File ini menangani semua operasi CRUD untuk kategori
- * 
- * Operasi yang tersedia:
  * - create: Menambah kategori baru
  * - read: Membaca data kategori (semua atau berdasarkan ID)
  * - update: Mengupdate data kategori

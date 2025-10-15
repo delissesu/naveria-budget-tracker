@@ -200,11 +200,6 @@ function deleteCategory(id) {
     }
 }
 
-// ========================================
-// Transaction Management Functions
-// Fungsi-fungsi untuk mengelola transaksi
-// ========================================
-
 /**
  * Memuat semua transaksi dari database
  * Data transaksi termasuk informasi kategori melalui JOIN
@@ -367,12 +362,6 @@ function deleteTransaction(id) {
         });
     }
 }
-
-// ========================================
-// Budget Management Functions
-// Fungsi-fungsi untuk mengelola anggaran
-// ========================================
-
 /**
  * Memuat semua data anggaran dari database
  * Data budget termasuk nama kategori melalui JOIN
@@ -514,10 +503,6 @@ function deleteBudget(id) {
     }
 }
 
-// ========================================
-// Modal Functions
-// ========================================
-
 /**
  * Open modal dialog
  * @param {string} modalId - ID of modal to open
@@ -534,10 +519,6 @@ function closeModal(modalId) {
     $('#' + modalId).removeClass('active');
 }
 
-// ========================================
-// Dashboard Functions
-// ========================================
-
 /**
  * Load dashboard summary data
  */
@@ -548,7 +529,6 @@ function loadDashboard() {
         dataType: 'json',
         success: function(response) {
             if (response.success && response.data) {
-                // Update totals with null checking
                 const totalIncome = response.data.total_income || 0;
                 const totalExpense = response.data.total_expense || 0;
                 const totalBudget = response.data.total_budget || 0;

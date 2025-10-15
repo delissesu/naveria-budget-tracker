@@ -1,8 +1,5 @@
 <?php
 /**
- * Dashboard Action Handler
- * 
- * Menyediakan data ringkasan untuk dashboard:
  * - Total Pemasukan (income)
  * - Total Pengeluaran (expense)
  * - Total Anggaran (budget)
