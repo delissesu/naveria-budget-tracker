@@ -1,31 +1,76 @@
-// Global functions
+/**
+ * Naveria Budget Tracker - Main JavaScript File
+ * Menangani operasi AJAX dan interaksi UI
+ * @author Naveria Budget Tracker Team
+ * @version 2.0
+ */
+
+// ========================================
+// Fungsi Utilitas Global
+// ========================================
+
+/**
+ * Menampilkan pesan alert kepada pengguna
+ * Alert akan muncul di bagian atas container dan otomatis hilang setelah 3 detik
+ * 
+ * @param {string} message - Pesan yang akan ditampilkan
+ * @param {string} type - Tipe alert (success, danger, warning, info)
+ */
 function showAlert(message, type = 'success') {
+    // Buat elemen alert dengan template string
     const alertDiv = $(`
         <div class="alert alert-${type} show">
             ${message}
         </div>
     `);
     
+    // Tambahkan alert ke awal container
     $('.container').first().prepend(alertDiv);
     
+    // Hapus alert setelah 3 detik dengan animasi fade
     setTimeout(() => {
         alertDiv.fadeOut(() => alertDiv.remove());
     }, 3000);
 }
 
+/**
+ * Format angka ke format Indonesia dengan pemisah ribuan
+ * Mengkonversi string atau number menjadi format yang mudah dibaca
+ * Contoh: 1000000 -> 1.000.000
+ * 
+ * @param {number|string} num - Angka yang akan diformat
+ * @returns {string} Angka yang sudah diformat dengan locale Indonesia
+ */
 function formatNumber(num) {
-    return new Intl.NumberFormat('id-ID').format(num);
+    // Konversi ke number terlebih dahulu, default 0 jika gagal
+    const number = parseFloat(num) || 0;
+    return new Intl.NumberFormat('id-ID').format(number);
 }
 
+/**
+ * Format tanggal ke format Indonesia yang mudah dibaca
+ * Contoh: 2025-10-15 -> 15 Oktober 2025
+ * 
+ * @param {string} dateString - String tanggal yang akan diformat
+ * @returns {string} Tanggal dalam format Indonesia
+ */
 function formatDate(dateString) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString('id-ID', options);
 }
 
-// Category Functions
+// ========================================
+// Fungsi Manajemen Kategori
+// ========================================
+
+/**
+ * Memuat semua kategori dari database dan menampilkannya
+ * Fungsi ini dipanggil saat halaman kategori pertama kali dimuat
+ * dan setelah operasi create/update/delete
+ */
 function loadCategories() {
     $.ajax({
-        url: 'actions/category_action.php?action=read',
+        url: '../actions/category-action.php?action=read',
         method: 'GET',
         dataType: 'json',
         success: function(response) {
@@ -39,15 +84,26 @@ function loadCategories() {
     });
 }
 
+/**
+ * Menampilkan data kategori ke dalam tabel
+ * Setiap baris dilengkapi dengan tombol Edit dan Hapus
+ * 
+ * @param {Array} categories - Array objek kategori dari database
+ */
 function displayCategories(categories) {
     let html = '';
+    
+    // Loop setiap kategori dan buat baris tabel
     categories.forEach(cat => {
+        // Tentukan class badge berdasarkan tipe kategori
         const typeClass = cat.type === 'income' ? 'badge-income' : 'badge-expense';
+        const typeLabel = cat.type === 'income' ? 'Pemasukan' : 'Pengeluaran';
+        
         html += `
             <tr>
                 <td>${cat.id}</td>
                 <td>${cat.icon} ${cat.name}</td>
-                <td><span class="badge ${typeClass}">${cat.type === 'income' ? 'Pemasukan' : 'Pengeluaran'}</span></td>
+                <td><span class="badge ${typeClass}">${typeLabel}</span></td>
                 <td>${formatDate(cat.created_at)}</td>
                 <td>
                     <button class="btn btn-warning btn-sm" onclick="editCategory(${cat.id})">
@@ -60,13 +116,22 @@ function displayCategories(categories) {
             </tr>
         `;
     });
+    
+    // Update konten tabel
     $('#categoryTableBody').html(html);
 }
 
+/**
+ * Menyimpan kategori baru atau update kategori yang sudah ada
+ * Fungsi ini otomatis mendeteksi apakah mode create atau update
+ * berdasarkan keberadaan categoryId
+ */
 function saveCategory() {
+    // Ambil ID kategori, jika ada berarti mode update
     const id = $('#categoryId').val();
     const action = id ? 'update' : 'create';
     
+    // Kumpulkan data dari form
     const formData = {
         action: action,
         id: id,
@@ -75,17 +140,18 @@ function saveCategory() {
         icon: $('#categoryIcon').val()
     };
     
+    // Kirim request AJAX ke server
     $.ajax({
-        url: 'actions/category_action.php',
+        url: '../actions/category-action.php',
         method: 'POST',
         data: formData,
         dataType: 'json',
         success: function(response) {
             if (response.success) {
                 showAlert(response.message, 'success');
-                closeModal('categoryModal');
-                loadCategories();
-                $('#categoryForm')[0].reset();
+                closeModal('categoryModal'); // Tutup modal
+                loadCategories(); // Reload data tabel
+                $('#categoryForm')[0].reset(); // Reset form
             } else {
                 showAlert(response.message, 'danger');
             }
@@ -96,9 +162,15 @@ function saveCategory() {
     });
 }
 
+/**
+ * Memuat data kategori untuk diedit
+ * Data yang dimuat akan mengisi form di modal edit
+ * 
+ * @param {number} id - ID kategori yang akan diedit
+ */
 function editCategory(id) {
     $.ajax({
-        url: `actions/category_action.php?action=read&id=${id}`,
+        url: `../actions/category-action.php?action=read&id=${id}`,
         method: 'GET',
         dataType: 'json',
         success: function(response) {
@@ -115,10 +187,16 @@ function editCategory(id) {
     });
 }
 
+/**
+ * Menghapus kategori dari database dengan konfirmasi
+ * Setelah berhasil dihapus, tabel akan di-reload otomatis
+ * 
+ * @param {number} id - ID kategori yang akan dihapus
+ */
 function deleteCategory(id) {
     if (confirm('Yakin ingin menghapus kategori ini?')) {
         $.ajax({
-            url: 'actions/category_action.php',
+            url: '../actions/category-action.php',
             method: 'POST',
             data: { action: 'delete', id: id },
             dataType: 'json',
@@ -129,15 +207,26 @@ function deleteCategory(id) {
                 } else {
                     showAlert(response.message, 'danger');
                 }
+            },
+            error: function(xhr, status, error) {
+                showAlert('Gagal menghapus kategori', 'danger');
             }
         });
     }
 }
 
-// Transaction Functions
+// ========================================
+// Transaction Management Functions
+// Fungsi-fungsi untuk mengelola transaksi
+// ========================================
+
+/**
+ * Memuat semua transaksi dari database
+ * Data transaksi termasuk informasi kategori melalui JOIN
+ */
 function loadTransactions() {
     $.ajax({
-        url: 'actions/transaction_action.php?action=read',
+        url: '../actions/transaction-action.php?action=read',
         method: 'GET',
         dataType: 'json',
         success: function(response) {
@@ -151,6 +240,12 @@ function loadTransactions() {
     });
 }
 
+/**
+ * Menampilkan data transaksi ke dalam tabel
+ * Dilengkapi dengan format tanggal dan nominal rupiah
+ * 
+ * @param {Array} transactions - Array objek transaksi dari database
+ */
 function displayTransactions(transactions) {
     let html = '';
     transactions.forEach(trans => {
@@ -175,9 +270,13 @@ function displayTransactions(transactions) {
     $('#transactionTableBody').html(html);
 }
 
+/**
+ * Memuat pilihan kategori untuk dropdown select
+ * Digunakan di form transaksi dan budget
+ */
 function loadCategoryOptions() {
     $.ajax({
-        url: 'actions/category_action.php?action=read',
+        url: '../actions/category-action.php?action=read',
         method: 'GET',
         dataType: 'json',
         success: function(response) {
@@ -192,6 +291,10 @@ function loadCategoryOptions() {
     });
 }
 
+/**
+ * Menyimpan transaksi (create/update) ke database
+ * Mode ditentukan berdasarkan ada tidaknya ID transaksi
+ */
 function saveTransaction() {
     const id = $('#transactionId').val();
     const action = id ? 'update' : 'create';
@@ -206,7 +309,7 @@ function saveTransaction() {
     };
     
     $.ajax({
-        url: 'actions/transaction_action.php',
+        url: '../actions/transaction-action.php',
         method: 'POST',
         data: formData,
         dataType: 'json',
@@ -226,9 +329,15 @@ function saveTransaction() {
     });
 }
 
+/**
+ * Memuat data transaksi untuk diedit
+ * Data akan mengisi form di modal edit transaksi
+ * 
+ * @param {number} id - ID transaksi yang akan diedit
+ */
 function editTransaction(id) {
     $.ajax({
-        url: `actions/transaction_action.php?action=read&id=${id}`,
+        url: `../actions/transaction-action.php?action=read&id=${id}`,
         method: 'GET',
         dataType: 'json',
         success: function(response) {
@@ -246,10 +355,16 @@ function editTransaction(id) {
     });
 }
 
+/**
+ * Menghapus transaksi dengan konfirmasi
+ * Setelah berhasil, tabel transaksi akan di-reload
+ * 
+ * @param {number} id - ID transaksi yang akan dihapus
+ */
 function deleteTransaction(id) {
     if (confirm('Yakin ingin menghapus transaksi ini?')) {
         $.ajax({
-            url: 'actions/transaction_action.php',
+            url: '../actions/transaction-action.php',
             method: 'POST',
             data: { action: 'delete', id: id },
             dataType: 'json',
@@ -260,15 +375,26 @@ function deleteTransaction(id) {
                 } else {
                     showAlert(response.message, 'danger');
                 }
+            },
+            error: function(xhr, status, error) {
+                showAlert('Gagal menghapus transaksi', 'danger');
             }
         });
     }
 }
 
-// Budget Functions
+// ========================================
+// Budget Management Functions
+// Fungsi-fungsi untuk mengelola anggaran
+// ========================================
+
+/**
+ * Memuat semua data anggaran dari database
+ * Data budget termasuk nama kategori melalui JOIN
+ */
 function loadBudgets() {
     $.ajax({
-        url: 'actions/budget_action.php?action=read',
+        url: '../actions/budget-action.php?action=read',
         method: 'GET',
         dataType: 'json',
         success: function(response) {
@@ -282,6 +408,12 @@ function loadBudgets() {
     });
 }
 
+/**
+ * Menampilkan data anggaran ke dalam tabel
+ * Periode ditampilkan dengan badge berbeda (monthly/yearly)
+ * 
+ * @param {Array} budgets - Array objek budget dari database
+ */
 function displayBudgets(budgets) {
     let html = '';
     budgets.forEach(budget => {
@@ -308,6 +440,9 @@ function displayBudgets(budgets) {
     $('#budgetTableBody').html(html);
 }
 
+/**
+ * Save budget (create or update)
+ */
 function saveBudget() {
     const id = $('#budgetId').val();
     const action = id ? 'update' : 'create';
@@ -323,7 +458,7 @@ function saveBudget() {
     };
     
     $.ajax({
-        url: 'actions/budget_action.php',
+        url: '../actions/budget-action.php',
         method: 'POST',
         data: formData,
         dataType: 'json',
@@ -343,9 +478,13 @@ function saveBudget() {
     });
 }
 
+/**
+ * Load budget data for editing
+ * @param {number} id - Budget ID
+ */
 function editBudget(id) {
     $.ajax({
-        url: `actions/budget_action.php?action=read&id=${id}`,
+        url: `../actions/budget-action.php?action=read&id=${id}`,
         method: 'GET',
         dataType: 'json',
         success: function(response) {
@@ -364,10 +503,14 @@ function editBudget(id) {
     });
 }
 
+/**
+ * Delete budget with confirmation
+ * @param {number} id - Budget ID
+ */
 function deleteBudget(id) {
     if (confirm('Yakin ingin menghapus anggaran ini?')) {
         $.ajax({
-            url: 'actions/budget_action.php',
+            url: '../actions/budget-action.php',
             method: 'POST',
             data: { action: 'delete', id: id },
             dataType: 'json',
@@ -378,38 +521,75 @@ function deleteBudget(id) {
                 } else {
                     showAlert(response.message, 'danger');
                 }
+            },
+            error: function(xhr, status, error) {
+                showAlert('Gagal menghapus anggaran', 'danger');
             }
         });
     }
 }
 
+// ========================================
 // Modal Functions
+// ========================================
+
+/**
+ * Open modal dialog
+ * @param {string} modalId - ID of modal to open
+ */
 function openModal(modalId) {
     $('#' + modalId).addClass('active');
 }
 
+/**
+ * Close modal dialog
+ * @param {string} modalId - ID of modal to close
+ */
 function closeModal(modalId) {
     $('#' + modalId).removeClass('active');
 }
 
+// ========================================
 // Dashboard Functions
+// ========================================
+
+/**
+ * Load dashboard summary data
+ */
 function loadDashboard() {
     $.ajax({
-        url: 'actions/dashboard_action.php',
+        url: '../actions/dashboard-action.php',
         method: 'GET',
         dataType: 'json',
         success: function(response) {
-            if (response.success) {
-                $('#totalIncome').text('Rp ' + formatNumber(response.data.total_income));
-                $('#totalExpense').text('Rp ' + formatNumber(response.data.total_expense));
-                $('#totalBudget').text('Rp ' + formatNumber(response.data.total_budget));
+            if (response.success && response.data) {
+                // Update totals with null checking
+                const totalIncome = response.data.total_income || 0;
+                const totalExpense = response.data.total_expense || 0;
+                const totalBudget = response.data.total_budget || 0;
                 
-                displayRecentTransactions(response.data.recent_transactions);
+                $('#totalIncome').text('Rp ' + formatNumber(totalIncome));
+                $('#totalExpense').text('Rp ' + formatNumber(totalExpense));
+                $('#totalBudget').text('Rp ' + formatNumber(totalBudget));
+                
+                // Update recent transactions
+                if (response.data.recent_transactions) {
+                    displayRecentTransactions(response.data.recent_transactions);
+                }
+            } else {
+                showAlert('Gagal memuat data dashboard: ' + (response.message || 'Unknown error'), 'danger');
             }
+        },
+        error: function(xhr, status, error) {
+            showAlert('Gagal memuat data dashboard', 'danger');
         }
     });
 }
 
+/**
+ * Display recent transactions in dashboard
+ * @param {Array} transactions - Array of recent transaction objects
+ */
 function displayRecentTransactions(transactions) {
     let html = '';
     if (transactions.length === 0) {

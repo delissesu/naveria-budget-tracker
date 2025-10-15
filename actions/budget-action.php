@@ -1,10 +1,23 @@
 <?php
+/**
+ * Budget Action Handler
+ * 
+ * Menangani operasi CRUD untuk anggaran/budget
+ * - create: Tambah budget baru
+ * - read: Ambil data budget
+ * - update: Update data budget
+ * - delete: Hapus budget
+ * 
+ * @version 1.0
+ */
+
 header('Content-Type: application/json');
 require_once '../config/database.php';
 
 $database = new Database();
 $db = $database->getConnection();
 
+// Routing berdasarkan parameter action
 $action = isset($_GET['action']) ? $_GET['action'] : (isset($_POST['action']) ? $_POST['action'] : '');
 
 switch($action) {
@@ -24,13 +37,22 @@ switch($action) {
         echo json_encode(['success' => false, 'message' => 'Invalid action']);
 }
 
+/**
+ * Menambah budget baru ke database
+ * Period menggunakan ENUM: 'monthly' atau 'yearly'
+ * 
+ * @param PDO $db Koneksi database
+ * @return JSON {success: boolean, message: string, id: number}
+ */
 function createBudget($db) {
+    // Validasi dan sanitasi input
     $category_id = htmlspecialchars(strip_tags($_POST['category_id']));
     $amount = htmlspecialchars(strip_tags($_POST['amount']));
     $period = htmlspecialchars(strip_tags($_POST['period']));
     $start_date = htmlspecialchars(strip_tags($_POST['start_date']));
     $end_date = htmlspecialchars(strip_tags($_POST['end_date']));
     
+    // Insert data dengan cast ENUM untuk period
     $query = "INSERT INTO budgets (category_id, amount, period, start_date, end_date) 
               VALUES (:category_id, :amount, :period::budget_period, :start_date, :end_date)
               RETURNING id";

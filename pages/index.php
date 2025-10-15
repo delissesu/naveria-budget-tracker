@@ -1,8 +1,22 @@
-<?php include 'includes/header.php'; ?>
+<?php 
+/**
+ * Halaman Dashboard
+ * 
+ * Menampilkan ringkasan keuangan:
+ * - Total pemasukan
+ * - Total pengeluaran  
+ * - Total anggaran
+ * - 5 transaksi terakhir
+ * 
+ * Data dimuat secara dinamis menggunakan AJAX
+ */
+include '../includes/header.php'; 
+?>
 
 <div class="container">
     <h1 style="margin-bottom: 2rem;">Dashboard</h1>
     
+    <!-- Kartu statistik ringkasan -->
     <div class="dashboard-cards">
         <div class="stat-card">
             <div class="stat-icon income">
@@ -59,10 +73,10 @@
     </div>
 </div>
 
+<?php include '../includes/footer.php'; ?>
+
 <script>
 $(document).ready(function() {
     loadDashboard();
 });
 </script>
-
-<?php include 'includes/footer.php'; ?>

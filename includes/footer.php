@@ -1,8 +1,14 @@
-</div>
+    </div> <!-- End of main-container -->
+    
+    <!-- Footer -->
     <footer class="footer">
-        <p>&copy; 2025 Budget Tracker. All rights reserved.</p>
+        <p>Naveria Budget Tracker</p>
     </footer>
+    
+    <!-- jQuery library - harus dimuat sebelum script.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="assets/js/script.js"></script>
+    
+    <!-- Custom JavaScript dengan cache buster untuk force reload saat ada perubahan -->
+    <script src="../assets/js/script.js?v=2.0"></script>
 </body>
 </html>

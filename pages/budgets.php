@@ -1,4 +1,4 @@
-<?php include 'includes/header.php'; ?>
+<?php include '../includes/header.php'; ?>
 
 <div class="container">
     <div class="card">
@@ -81,10 +81,10 @@
     </div>
 </div>
 
+<?php include '../includes/footer.php'; ?>
+
 <script>
 $(document).ready(function() {
     loadBudgets();
 });
 </script>
-
-<?php include 'includes/footer.php'; ?>
