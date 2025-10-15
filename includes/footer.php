@@ -2,7 +2,7 @@
     
     <!-- Footer -->
     <footer class="footer">
-        <p>Naveria Budget Tracker</p>
+        <p>@naveriaworks</p>
     </footer>
     
     <!-- jQuery library - harus dimuat sebelum script.js -->
