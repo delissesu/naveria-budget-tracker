@@ -1,0 +1,53 @@
+<?php
+header('Content-Type: application/json');
+require_once '../config/database.php';
+
+$database = new Database();
+$db = $database->getConnection();
+
+// Get total income
+$queryIncome = "SELECT COALESCE(SUM(t.amount), 0) as total 
+                FROM transactions t 
+                LEFT JOIN categories c ON t.category_id = c.id 
+                WHERE c.type = 'income'";
+$stmtIncome = $db->prepare($queryIncome);
+$stmtIncome->execute();
+$totalIncome = $stmtIncome->fetch(PDO::FETCH_ASSOC)['total'];
+
+// Get total expense
+$queryExpense = "SELECT COALESCE(SUM(t.amount), 0) as total 
+                 FROM transactions t 
+                 LEFT JOIN categories c ON t.category_id = c.id 
+                 WHERE c.type = 'expense'";
+$stmtExpense = $db->prepare($queryExpense);
+$stmtExpense->execute();
+$totalExpense = $stmtExpense->fetch(PDO::FETCH_ASSOC)['total'];
+
+// Get total budget
+$queryBudget = "SELECT COALESCE(SUM(amount), 0) as total FROM budgets";
+$stmtBudget = $db->prepare($queryBudget);
+$stmtBudget->execute();
+$totalBudget = $stmtBudget->fetch(PDO::FETCH_ASSOC)['total'];
+
+// Get recent transactions (last 5)
+$queryRecent = "SELECT t.*, c.name as category_name 
+                FROM transactions t 
+                LEFT JOIN categories c ON t.category_id = c.id 
+                ORDER BY t.transaction_date DESC, t.created_at DESC 
+                LIMIT 5";
+$stmtRecent = $db->prepare($queryRecent);
+$stmtRecent->execute();
+$recentTransactions = $stmtRecent->fetchAll(PDO::FETCH_ASSOC);
+
+$response = [
+    'success' => true,
+    'data' => [
+        'total_income' => $totalIncome,
+        'total_expense' => $totalExpense,
+        'total_budget' => $totalBudget,
+        'recent_transactions' => $recentTransactions
+    ]
+];
+
+echo json_encode($response);
+?>
