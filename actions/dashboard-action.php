@@ -8,9 +8,6 @@
  * - Total Anggaran (budget)
  * - 5 Transaksi Terakhir
  * 
- * Menggunakan COALESCE untuk menghindari NULL
- * dan LEFT JOIN untuk menampilkan nama kategori
- * 
  * @version 1.0
  */
 

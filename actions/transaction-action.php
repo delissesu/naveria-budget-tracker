@@ -1,12 +1,5 @@
 <?php
 /**
- * Transaction Action Handler
- * 
- * Menangani operasi CRUD untuk transaksi
- * - create: Tambah transaksi baru
- * - read: Ambil data transaksi
- * - update: Update data transaksi
- * - delete: Hapus transaksi
  * 
  * @version 1.0
  */
