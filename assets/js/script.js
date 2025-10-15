@@ -1,15 +1,4 @@
 /**
- * Naveria Budget Tracker - Main JavaScript File
- * Menangani operasi AJAX dan interaksi UI
- * @author Naveria Budget Tracker Team
- * @version 2.0
- */
-
-// ========================================
-// Fungsi Utilitas Global
-// ========================================
-
-/**
  * Menampilkan pesan alert kepada pengguna
  * Alert akan muncul di bagian atas container dan otomatis hilang setelah 3 detik
  * 
@@ -58,10 +47,6 @@ function formatDate(dateString) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString('id-ID', options);
 }
-
-// ========================================
-// Fungsi Manajemen Kategori
-// ========================================
 
 /**
  * Memuat semua kategori dari database dan menampilkannya
