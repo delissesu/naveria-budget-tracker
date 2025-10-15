@@ -43,6 +43,10 @@ INSERT INTO categories (name, type, icon) VALUES
 
 SELECT * FROM categories
 
+SELECT * FROM budgets
+
+SELECT * FROM transactions
+
 CREATE INDEX idx_transactions_category_id ON transactions(category_id);
 CREATE INDEX idx_transactions_date ON transactions(transaction_date);
 CREATE INDEX idx_budgets_category_id ON budgets(category_id);
