@@ -29,7 +29,10 @@ function createCategory($db) {
     $type = htmlspecialchars(strip_tags($_POST['type']));
     $icon = htmlspecialchars(strip_tags($_POST['icon']));
     
-    $query = "INSERT INTO categories (name, type, icon) VALUES (:name, :type, :icon)";
+    // PostgreSQL: Use RETURNING clause to get inserted ID
+    $query = "INSERT INTO categories (name, type, icon) 
+              VALUES (:name, :type::category_type, :icon) 
+              RETURNING id";
     $stmt = $db->prepare($query);
     
     $stmt->bindParam(':name', $name);
@@ -37,7 +40,12 @@ function createCategory($db) {
     $stmt->bindParam(':icon', $icon);
     
     if($stmt->execute()) {
-        echo json_encode(['success' => true, 'message' => 'Kategori berhasil ditambahkan']);
+        $id = $stmt->fetch(PDO::FETCH_ASSOC)['id'];
+        echo json_encode([
+            'success' => true, 
+            'message' => 'Kategori berhasil ditambahkan',
+            'id' => $id
+        ]);
     } else {
         echo json_encode(['success' => false, 'message' => 'Gagal menambahkan kategori']);
     }
@@ -47,11 +55,13 @@ function readCategories($db) {
     $id = isset($_GET['id']) ? $_GET['id'] : null;
     
     if($id) {
-        $query = "SELECT * FROM categories WHERE id = :id";
+        $query = "SELECT id, name, type::text, icon, created_at 
+                  FROM categories WHERE id = :id";
         $stmt = $db->prepare($query);
-        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     } else {
-        $query = "SELECT * FROM categories ORDER BY created_at DESC";
+        $query = "SELECT id, name, type::text, icon, created_at 
+                  FROM categories ORDER BY created_at DESC";
         $stmt = $db->prepare($query);
     }
     
@@ -67,10 +77,12 @@ function updateCategory($db) {
     $type = htmlspecialchars(strip_tags($_POST['type']));
     $icon = htmlspecialchars(strip_tags($_POST['icon']));
     
-    $query = "UPDATE categories SET name = :name, type = :type, icon = :icon WHERE id = :id";
+    $query = "UPDATE categories 
+              SET name = :name, type = :type::category_type, icon = :icon 
+              WHERE id = :id";
     $stmt = $db->prepare($query);
     
-    $stmt->bindParam(':id', $id);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     $stmt->bindParam(':name', $name);
     $stmt->bindParam(':type', $type);
     $stmt->bindParam(':icon', $icon);
@@ -87,10 +99,14 @@ function deleteCategory($db) {
     
     $query = "DELETE FROM categories WHERE id = :id";
     $stmt = $db->prepare($query);
-    $stmt->bindParam(':id', $id);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     
     if($stmt->execute()) {
-        echo json_encode(['success' => true, 'message' => 'Kategori berhasil dihapus']);
+        if($stmt->rowCount() > 0) {
+            echo json_encode(['success' => true, 'message' => 'Kategori berhasil dihapus']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Kategori tidak ditemukan']);
+        }
     } else {
         echo json_encode(['success' => false, 'message' => 'Gagal menghapus kategori']);
     }

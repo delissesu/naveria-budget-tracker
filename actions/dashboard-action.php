@@ -9,7 +9,7 @@ $db = $database->getConnection();
 $queryIncome = "SELECT COALESCE(SUM(t.amount), 0) as total 
                 FROM transactions t 
                 LEFT JOIN categories c ON t.category_id = c.id 
-                WHERE c.type = 'income'";
+                WHERE c.type = 'income'::category_type";
 $stmtIncome = $db->prepare($queryIncome);
 $stmtIncome->execute();
 $totalIncome = $stmtIncome->fetch(PDO::FETCH_ASSOC)['total'];
@@ -18,7 +18,7 @@ $totalIncome = $stmtIncome->fetch(PDO::FETCH_ASSOC)['total'];
 $queryExpense = "SELECT COALESCE(SUM(t.amount), 0) as total 
                  FROM transactions t 
                  LEFT JOIN categories c ON t.category_id = c.id 
-                 WHERE c.type = 'expense'";
+                 WHERE c.type = 'expense'::category_type";
 $stmtExpense = $db->prepare($queryExpense);
 $stmtExpense->execute();
 $totalExpense = $stmtExpense->fetch(PDO::FETCH_ASSOC)['total'];
@@ -30,7 +30,8 @@ $stmtBudget->execute();
 $totalBudget = $stmtBudget->fetch(PDO::FETCH_ASSOC)['total'];
 
 // Get recent transactions (last 5)
-$queryRecent = "SELECT t.*, c.name as category_name 
+$queryRecent = "SELECT t.id, t.amount, t.description, t.transaction_date, 
+                       t.created_at, c.name as category_name 
                 FROM transactions t 
                 LEFT JOIN categories c ON t.category_id = c.id 
                 ORDER BY t.transaction_date DESC, t.created_at DESC 
