@@ -1,9 +1,11 @@
 <?php include '../includes/header.php'; ?>
 
 <div class="container">
+    <h1>💼 Manajemen Anggaran</h1>
+    
     <div class="card">
         <div class="card-header">
-            <h2 class="card-title">Manajemen Anggaran</h2>
+            <h2 class="card-title">Daftar Anggaran</h2>
             <button class="btn btn-primary" onclick="openModal('budgetModal'); $('#budgetModalTitle').text('Tambah Anggaran'); $('#budgetForm')[0].reset(); $('#budgetId').val(''); loadCategoryOptions();">
                 <i class="fas fa-plus"></i> Tambah Anggaran
             </button>

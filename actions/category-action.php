@@ -22,7 +22,7 @@ $database = new Database();
 $db = $database->getConnection();
 
 // Ambil action dari request (GET atau POST)
-$action = isset($_GET['action']) ? $_GET['action'] : (isset($_POST['action']) ? $_POST['action'] : '');
+$action = $_GET['action'] ?? $_POST['action'] ?? '';
 
 // Routing ke fungsi yang sesuai berdasarkan action
 switch($action) {
@@ -51,9 +51,9 @@ switch($action) {
  * - icon: Icon emoji untuk kategori
  * 
  * @param PDO $db Koneksi database
- * @return JSON Response dengan status dan ID kategori baru
+ * @return void
  */
-function createCategory($db) {
+function createCategory($db): void {
     // Sanitasi input untuk keamanan
     $name = htmlspecialchars(strip_tags($_POST['name']));
     $type = htmlspecialchars(strip_tags($_POST['type']));
@@ -92,10 +92,10 @@ function createCategory($db) {
  * - id: ID kategori yang ingin dibaca
  * 
  * @param PDO $db Koneksi database
- * @return JSON Array kategori atau kategori tunggal
+ * @return void
  */
-function readCategories($db) {
-    $id = isset($_GET['id']) ? $_GET['id'] : null;
+function readCategories($db): void {
+    $id = $_GET['id'] ?? null;
     
     if($id) {
         // Query untuk satu kategori berdasarkan ID
@@ -126,9 +126,9 @@ function readCategories($db) {
  * - icon: Icon baru untuk kategori
  * 
  * @param PDO $db Koneksi database
- * @return JSON Response dengan status operasi
+ * @return void
  */
-function updateCategory($db) {
+function updateCategory($db): void {
     $id = htmlspecialchars(strip_tags($_POST['id']));
     $name = htmlspecialchars(strip_tags($_POST['name']));
     $type = htmlspecialchars(strip_tags($_POST['type']));
@@ -158,9 +158,9 @@ function updateCategory($db) {
  * karena kategori yang memiliki transaksi tidak bisa dihapus
  * 
  * @param PDO $db Koneksi database
- * @return JSON {success: boolean, message: string}
+ * @return void
  */
-function deleteCategory($db) {
+function deleteCategory($db): void {
     try {
         // Validasi dan sanitasi input
         $id = htmlspecialchars(strip_tags($_POST['id']));
@@ -186,4 +186,3 @@ function deleteCategory($db) {
         echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
     }
 }
-?>

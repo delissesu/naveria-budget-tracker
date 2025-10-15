@@ -1,9 +1,11 @@
 <?php include '../includes/header.php'; ?>
 
 <div class="container">
+    <h1>📂 Manajemen Kategori</h1>
+    
     <div class="card">
         <div class="card-header">
-            <h2 class="card-title">Manajemen Kategori</h2>
+            <h2 class="card-title">Daftar Kategori</h2>
             <button class="btn btn-primary" onclick="openModal('categoryModal'); $('#modalTitle').text('Tambah Kategori'); $('#categoryForm')[0].reset(); $('#categoryId').val('');">
                 <i class="fas fa-plus"></i> Tambah Kategori
             </button>

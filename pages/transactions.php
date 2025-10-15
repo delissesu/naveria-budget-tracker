@@ -1,9 +1,11 @@
 <?php include '../includes/header.php'; ?>
 
 <div class="container">
+    <h1>💰 Manajemen Transaksi</h1>
+    
     <div class="card">
         <div class="card-header">
-            <h2 class="card-title">Manajemen Transaksi</h2>
+            <h2 class="card-title">Daftar Transaksi</h2>
             <button class="btn btn-primary" onclick="openModal('transactionModal'); $('#transactionModalTitle').text('Tambah Transaksi'); $('#transactionForm')[0].reset(); $('#transactionId').val(''); loadCategoryOptions();">
                 <i class="fas fa-plus"></i> Tambah Transaksi
             </button>

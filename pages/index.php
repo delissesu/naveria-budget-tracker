@@ -14,7 +14,7 @@ include '../includes/header.php';
 ?>
 
 <div class="container">
-    <h1 style="margin-bottom: 2rem;">Dashboard</h1>
+    <h1>📊 Dashboard</h1>
     
     <!-- Kartu statistik ringkasan -->
     <div class="dashboard-cards">

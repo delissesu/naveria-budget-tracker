@@ -18,7 +18,7 @@ $database = new Database();
 $db = $database->getConnection();
 
 // Routing berdasarkan parameter action
-$action = isset($_GET['action']) ? $_GET['action'] : (isset($_POST['action']) ? $_POST['action'] : '');
+$action = $_GET['action'] ?? $_POST['action'] ?? '';
 
 switch($action) {
     case 'create':
@@ -41,9 +41,9 @@ switch($action) {
  * Menambah transaksi baru ke database
  * 
  * @param PDO $db Koneksi database
- * @return JSON {success: boolean, message: string, id: number}
+ * @return void Outputs JSON {success: boolean, message: string, id: number}
  */
-function createTransaction($db) {
+function createTransaction($db): void {
     // Validasi dan sanitasi input
     $category_id = htmlspecialchars(strip_tags($_POST['category_id']));
     $amount = htmlspecialchars(strip_tags($_POST['amount']));
@@ -78,10 +78,10 @@ function createTransaction($db) {
  * Bisa untuk satu transaksi (dengan id) atau semua transaksi
  * 
  * @param PDO $db Koneksi database
- * @return JSON {success: boolean, data: array}
+ * @return void Outputs JSON {success: boolean, data: array}
  */
-function readTransactions($db) {
-    $id = isset($_GET['id']) ? $_GET['id'] : null;
+function readTransactions($db): void {
+    $id = $_GET['id'] ?? null;
     
     if($id) {
         // Ambil satu transaksi berdasarkan ID dengan JOIN ke categories
@@ -112,9 +112,9 @@ function readTransactions($db) {
  * Mengupdate data transaksi yang sudah ada
  * 
  * @param PDO $db Koneksi database
- * @return JSON {success: boolean, message: string}
+ * @return void Outputs JSON {success: boolean, message: string}
  */
-function updateTransaction($db) {
+function updateTransaction($db): void {
     // Validasi dan sanitasi input
     $id = htmlspecialchars(strip_tags($_POST['id']));
     $category_id = htmlspecialchars(strip_tags($_POST['category_id']));
@@ -149,9 +149,9 @@ function updateTransaction($db) {
  * Menghapus transaksi dari database
  * 
  * @param PDO $db Koneksi database
- * @return JSON {success: boolean, message: string}
+ * @return void Outputs JSON {success: boolean, message: string}
  */
-function deleteTransaction($db) {
+function deleteTransaction($db): void {
     // Validasi dan sanitasi input
     $id = htmlspecialchars(strip_tags($_POST['id']));
     
@@ -171,4 +171,3 @@ function deleteTransaction($db) {
         echo json_encode(['success' => false, 'message' => 'Gagal menghapus transaksi']);
     }
 }
-?>
