@@ -1,3 +1,4 @@
+-- Active: 1748311330274@@127.0.0.1@5432@budget_tracker
 CREATE TYPE category_type AS ENUM ('income', 'expense');
 CREATE TYPE budget_period AS ENUM ('monthly', 'yearly');
 
@@ -41,3 +42,29 @@ INSERT INTO categories (name, type, icon) VALUES
 ('Hiburan', 'expense', '🎬');
 
 SELECT * FROM categories
+
+CREATE INDEX idx_transactions_category_id ON transactions(category_id);
+CREATE INDEX idx_transactions_date ON transactions(transaction_date);
+CREATE INDEX idx_budgets_category_id ON budgets(category_id);
+CREATE INDEX idx_budgets_period ON budgets(start_date, end_date);
+
+INSERT INTO transactions (category_id, amount, description, transaction_date) VALUES
+(1, 5000000, 'Gaji Bulan Oktober', '2025-10-01'),
+(4, 150000, 'Makan siang', '2025-10-05'),
+(5, 200000, 'Bensin motor', '2025-10-06'),
+(6, 500000, 'Belanja bulanan', '2025-10-07'),
+(7, 100000, 'Nonton film', '2025-10-08');
+
+-- Data Sample untuk Budgets
+INSERT INTO budgets (category_id, amount, period, start_date, end_date) VALUES
+(4, 1500000, 'monthly', '2025-10-01', '2025-10-31'),
+(5, 800000, 'monthly', '2025-10-01', '2025-10-31'),
+(6, 2000000, 'monthly', '2025-10-01', '2025-10-31'),
+(7, 500000, 'monthly', '2025-10-01', '2025-10-31');
+
+-- Verify data
+SELECT 'Categories' as "Nama Tabel", COUNT(*) as "Jumlah" FROM categories
+UNION ALL
+SELECT 'Transactions', COUNT(*) FROM transactions
+UNION ALL
+SELECT 'Budgets', COUNT(*) FROM budgets;

@@ -4,7 +4,7 @@ class Database {
     private $host = "localhost";
     private $db_name = "budget_tracker";
     private $username = "postgres";
-    private $password = "your_password";
+    private $password = "Delion21";
     private $port = "5432";
     public $conn;
 
